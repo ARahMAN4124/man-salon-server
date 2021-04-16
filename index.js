@@ -1,5 +1,6 @@
 const express = require("express");
 const MongoClient = require("mongodb").MongoClient;
+const ObjectId = require("mongodb").ObjectID;
 const cors = require("cors");
 require("dotenv").config();
 
@@ -21,6 +22,7 @@ client.connect((err) => {
   const ServiceCollection = client.db("manSalon").collection("service");
   const TestimonialCollection = client.db("manSalon").collection("testimonial");
   const AdminDevCollection = client.db("manSalon").collection("adminDev");
+  const OrderCollection = client.db("manSalon").collection("orders");
 
   //   service add to database
 
@@ -37,6 +39,39 @@ client.connect((err) => {
   app.get("/services", (req, res) => {
     ServiceCollection.find({}).toArray((err, document) => {
       res.send(document);
+    });
+  });
+
+  // One service load for order
+  app.post("/orderOn", (req, res) => {
+    const serviceDetail = req.body;
+    ServiceCollection.find({ _id: ObjectId(serviceDetail.id) }).toArray(
+      (err, document) => {
+        res.send(document);
+      }
+    );
+  });
+
+  //order insert to database
+
+  app.post("/addOrder", (req, res) => {
+    const order = req.body;
+    OrderCollection.insertOne(order).then((result) => {
+      res.send(result.insertedCount > 0);
+    });
+  });
+
+  //order list  send to user/admin
+
+  app.post("/orderList", (req, res) => {
+    const checkAdmin = req.body.email;
+    AdminDevCollection.find({ Email: checkAdmin }).toArray((err, result) => {
+      console.log(result.length > 0);
+      if (result.length == 0) {
+        OrderCollection.find({ email: checkAdmin }).toArray((err, document) => {
+          res.send(document);
+        });
+      }
     });
   });
 
@@ -63,13 +98,19 @@ client.connect((err) => {
 
   app.post("/addAdmin", (req, res) => {
     const admin = req.body.data;
-    console.log(admin);
     AdminDevCollection.insertOne(admin).then((result) => {
       console.log(result.insertedCount);
     });
   });
 
   //send admin to ul
+
+  app.post("/admins", (req, res) => {
+    const isAdmin = req.body.email;
+    AdminDevCollection.find({ Email: isAdmin }).toArray((err, result) => {
+      res.send(result.length > 0);
+    });
+  });
 });
 
 app.get("/", (req, res) => {
