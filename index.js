@@ -67,6 +67,11 @@ client.connect((err) => {
     const checkAdmin = req.body.email;
     AdminDevCollection.find({ Email: checkAdmin }).toArray((err, result) => {
       console.log(result.length > 0);
+      if (result.length > 0) {
+        OrderCollection.find({}).toArray((err, document) => {
+          res.send(document);
+        });
+      }
       if (result.length == 0) {
         OrderCollection.find({ email: checkAdmin }).toArray((err, document) => {
           res.send(document);
