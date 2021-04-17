@@ -79,8 +79,6 @@ client.connect((err) => {
     });
   });
 
-  // testimonial add to database
-
   app.post("/addTestimonial", (req, res) => {
     const testimonial = req.body.testimonialInfo;
     console.log(testimonial);
