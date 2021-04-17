@@ -66,7 +66,6 @@ client.connect((err) => {
   app.post("/orderList", (req, res) => {
     const checkAdmin = req.body.email;
     AdminDevCollection.find({ Email: checkAdmin }).toArray((err, result) => {
-      console.log(result.length > 0);
       if (result.length > 0) {
         OrderCollection.find({}).toArray((err, document) => {
           res.send(document);
@@ -122,4 +121,4 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.listen(port);
+app.listen(precess.env.PORT || port);
