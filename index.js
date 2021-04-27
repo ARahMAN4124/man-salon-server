@@ -79,11 +79,26 @@ client.connect((err) => {
     });
   });
 
+  //order status update
+
+  app.patch("/orderStatus/:id", (req, res) => {
+    const updateStatus = req.body.status;
+    OrderCollection.updateOne(
+      { _id: ObjectId(req.params.id) },
+      {
+        $set: { status: updateStatus },
+      }
+    ).then((result) => {
+      res.send(result.modifiedCount > 0);
+    });
+  });
+
+  //testimonial show
+
   app.post("/addTestimonial", (req, res) => {
     const testimonial = req.body.testimonialInfo;
     console.log(testimonial);
     TestimonialCollection.insertOne(testimonial).then((result) => {
-      console.log(result.insertedCount);
       res.send(result.insertedCount > 0);
     });
   });
@@ -102,6 +117,17 @@ client.connect((err) => {
     const admin = req.body.data;
     AdminDevCollection.insertOne(admin).then((result) => {
       console.log(result.insertedCount);
+    });
+  });
+
+  //service delete
+
+  app.delete("/deletedService/:id", (req, res) => {
+    const serviceId = req.params.id;
+    console.log(serviceId);
+    ServiceCollection.deleteOne({ _id: ObjectId(serviceId) }).then((result) => {
+      console.log(result.deletedCount);
+      res.send(result.deletedCount > 0);
     });
   });
 
