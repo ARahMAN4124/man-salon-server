@@ -124,9 +124,7 @@ client.connect((err) => {
 
   app.delete("/deletedService/:id", (req, res) => {
     const serviceId = req.params.id;
-    console.log(serviceId);
     ServiceCollection.deleteOne({ _id: ObjectId(serviceId) }).then((result) => {
-      console.log(result.deletedCount);
       res.send(result.deletedCount > 0);
     });
   });
